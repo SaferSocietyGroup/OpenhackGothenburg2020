@@ -20,10 +20,30 @@ export async function checkCode(code: string): Promise<ICodeResult | null> {
     return null;
   } catch (error) {
     console.log(error);
-    return null;
+    return { co2equiv: 2, sortAs: "Plastic" };
   }
 }
 
 // Recycling Categories
+export interface ICategoriesResult {
+  categories: string[];
+}
+
+const categoriesUrl = `${baseUrl}v1/categories`;
+
+export async function getCategories(): Promise<ICategoriesResult | null> {
+  try {
+    const result = await fetch(categoriesUrl);
+    if (result.ok) {
+      const rawData = await result.text();
+      const data = (await JSON.parse(rawData)) as ICategoriesResult;
+      return data;
+    }
+    return null;
+  } catch (error) {
+    console.log({ error });
+    return null;
+  }
+}
 
 // Voting

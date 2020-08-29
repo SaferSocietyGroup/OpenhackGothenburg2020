@@ -2,6 +2,7 @@
 export interface ICodeResult {
   co2equiv: number;
   sortAs?: string;
+  badness?: number;
 }
 
 const codeUrl = "http://192.168.10.65:5000/v1/product/{code}";

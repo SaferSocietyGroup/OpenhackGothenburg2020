@@ -1,13 +1,13 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { ScannerView } from "./Views/ScannerView";
-import { ResultView } from "./Views/ResultView";
-import { Camera } from "expo-camera";
-import { ICodeResult } from "./Functions/Api";
-import { SplashView } from "./Views/SplashView";
+import { ScannerView } from "./src/Views/ScannerView";
+import { ResultView } from "./src/Views/ResultView";
+import { ICodeResult } from "./src/Functions/Api";
+import { SplashView } from "./src/Views/SplashView";
+import { BarCodeScanner } from "expo-barcode-scanner";
 
 function checkPermission(setPermission: any) {
-  Camera.requestPermissionsAsync().then((status) => {
+  BarCodeScanner.requestPermissionsAsync().then((status) => {
     setPermission(status.status === "granted");
   });
 }
@@ -24,7 +24,7 @@ export default function App() {
     };
   }, [splashDone]);
 
-  const setResultCallback = (result: any) => {
+  const resultCallback = (result: any) => {
     setResult(result);
   };
 
@@ -32,10 +32,10 @@ export default function App() {
 
   const showResult = !!result;
 
-  if (!true) {
+  if (!permission) {
     return (
       <View style={styles.container}>
-        <Text>Must give permission :(</Text>
+        <Text>Must give permission to use camera :(</Text>
       </View>
     );
   }
@@ -45,9 +45,9 @@ export default function App() {
   }
 
   if (showResult) {
-    return <ResultView resultCallBack={setResultCallback} result={result}></ResultView>;
+    return <ResultView resultCallBack={resultCallback} result={result}></ResultView>;
   }
-  return <ScannerView resultCallBack={setResultCallback}></ScannerView>;
+  return <ScannerView resultCallBack={resultCallback}></ScannerView>;
 }
 
 const styles = StyleSheet.create({

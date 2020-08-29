@@ -59,10 +59,24 @@ def ping():
     return 'pong'
 
 
+@app.route('/v1/product')
+def get_all_product():
+    products = Product.query.all()
+
+    return {'barcodes':  [product.barcode for product in products]}
+
+
 @app.route('/v1/product/<barcode>')
 def get_product(barcode: str):
-    product = Product.query.filter_by(barcode=barcode).first_or_404()
-    # print(product.votes)
+    product = Product.query.filter_by(barcode=barcode).first()
+    if not product:
+        new_product = Product(barcode=barcode)
+        db.session.add(new_product)
+        db.session.commit()
+        return {
+            'co2equiv': None,
+            'category': 'Unknown'
+        }
     votes = list(map(list, groupby(product.votes, lambda vote: vote.category_id)))
     votes.sort(key=lambda group: len(group))
     print(votes)
@@ -71,7 +85,6 @@ def get_product(barcode: str):
         category = Category.query.filter_by(id=category_id).first().name
     else:
         category = 'Unknown'
-    # confidence =
 
     return {
         'co2equiv': product.co2equiv,

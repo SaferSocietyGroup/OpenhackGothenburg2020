@@ -73,7 +73,6 @@ def get_product(barcode: str):
     if product:
         votes = list([[group[0], list(group[1])] for group in groupby(product.votes, lambda vote: vote.category_id)])
         votes.sort(key=lambda group: len(group[1]), reverse=True)
-        print(votes)
         confidence = 0.0
         category_name = 'Unknown'
         category_gain = None
@@ -83,10 +82,12 @@ def get_product(barcode: str):
             category_name = category.name
             category_gain = category.gain
 
-            if len(votes) > 1 and len(votes[0][1]) > 10:
+            if len(votes) > 1 and len(votes[0][1]) - len(votes[1][1]) > 10:
                 confidence = 1.0
-            elif len(votes) > 1 and len(votes[0][1]) > 5:
-                confidence = 0.5
+            elif len(votes) > 1:
+                confidence = (len(votes[0][1]) - len(votes[1][1]))/10
+            else:
+                confidence = 0.0
 
         result = {
             'co2equiv': product.co2equiv,

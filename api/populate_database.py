@@ -11,10 +11,10 @@ def add_categories():
 
 
 def add_products():
-    crisps = Product(barcode='07340005404889', co2equiv=12.0)
+    crisps = Product(barcode='07340005404889', co2equiv=None)
     db.session.add(crisps)
 
-    biscuits = Product(barcode='07310521050204', co2equiv=2.0)
+    biscuits = Product(barcode='07310521050204', co2equiv=None)
     db.session.add(biscuits)
 
     db.session.commit()

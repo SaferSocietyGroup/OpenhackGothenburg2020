@@ -23,6 +23,7 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    gain = db.Column(db.Float, nullable=True)
 
 
 class Vote(db.Model):
@@ -69,27 +70,41 @@ def get_all_product():
 @app.route('/v1/product/<barcode>')
 def get_product(barcode: str):
     product = Product.query.filter_by(barcode=barcode).first()
-    if not product:
+    if product:
+        votes = list([[group[0], list(group[1])] for group in groupby(product.votes, lambda vote: vote.category_id)])
+        votes.sort(key=lambda group: len(group[1]), reverse=True)
+        print(votes)
+        confidence = 0.0
+        category_name = 'Unknown'
+        category_gain = None
+        if votes:
+            category_id = votes[0][0]
+            category = Category.query.filter_by(id=category_id).first()
+            category_name = category.name
+            category_gain = category.gain
+
+            if len(votes) > 1 and len(votes[0][1]) > 10:
+                confidence = 1.0
+            elif len(votes) > 1 and len(votes[0][1]) > 5:
+                confidence = 0.5
+
+        result = {
+            'co2equiv': product.co2equiv,
+            'co2equivRecyclingGain': category_gain,
+            'category': category_name,
+            'confidence': confidence
+        }
+    else:
         new_product = Product(barcode=barcode)
         db.session.add(new_product)
         db.session.commit()
-        return {
+        result = {
             'co2equiv': None,
-            'category': 'Unknown'
+            'category': 'Unknown',
+            'confidence': 0.0
         }
-    votes = list(map(list, groupby(product.votes, lambda vote: vote.category_id)))
-    votes.sort(key=lambda group: len(group))
-    print(votes)
-    if votes:
-        category_id = votes[0][0]
-        category = Category.query.filter_by(id=category_id).first().name
-    else:
-        category = 'Unknown'
 
-    return {
-        'co2equiv': product.co2equiv,
-        'category': category
-    }
+    return result
 
 
 @app.route('/v1/recycling/category')

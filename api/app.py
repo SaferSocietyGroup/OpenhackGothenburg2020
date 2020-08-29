@@ -17,6 +17,25 @@ class Product(db.Model):
     co2equiv = db.Column(db.Float)
 
 
+class Category(db.Model):
+    __tablename__ = 'category'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
+
+
+class Vote(db.Model):
+    __tablename__ = 'vote'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    category = db.relationship('Category', backref=db.backref('votes', lazy=True))
+
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product = db.relationship('Product', backref=db.backref('votes', lazy=True))
+
+
 def init_db():
     db.create_all()
 
@@ -43,3 +62,11 @@ def get_product(barcode: str):
     return {
         'co2equiv': product.co2equiv,
     }
+
+
+@app.route('/v1/category')
+def get_categories():
+    categories = Category.query.all()
+
+    return {'categories':
+        [category.name for category in categories]}

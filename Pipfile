@@ -13,6 +13,7 @@ simplejson = "*"
 sqlalchemy = "*"
 Flask-SQLAlchemy = "*"
 gunicorn = "*"
+pyodbc = "*"
 
 [requires]
-python_version = "3"
+python_version = "3.6"

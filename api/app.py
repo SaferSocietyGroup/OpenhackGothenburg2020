@@ -29,11 +29,6 @@ def init_db():
 
         db.session.commit()
 
-print('Before write')
-with open('test.txt', 'w') as testfile:
-    testfile.write('hello')
-print('After write')
-
 init_db()
 
 

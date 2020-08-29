@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { ICodeResult } from "../Functions/Api";
 
 interface IResultViewProps {
@@ -14,13 +14,19 @@ export function ResultView(props: IResultViewProps) {
 
   return (
     <View style={styles.container}>
-      <Text>CO2 Eq: {props.result.co2equiv}</Text>
-      <Button title="Scan another code" onPress={scanAnotherCode} color="#3d801f"></Button>
+      <Text style={styles.co2Label}>CO2 Eq: {props.result.co2equiv}</Text>
+      <TouchableOpacity style={styles.button} onPress={scanAnotherCode}>
+        <Text style={styles.buttonText}>Scan another code</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: { backgroundColor: "#3d801f", padding: 8, borderRadius: 2 },
+  buttonText: { color: "#FFFFFF" },
+
+  co2Label: { marginBottom: 8 },
   container: {
     flex: 1,
     backgroundColor: "#fff",

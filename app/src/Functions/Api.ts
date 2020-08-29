@@ -1,3 +1,5 @@
+const baseUrl = "http://192.168.10.65:5000/";
+
 // Check bar code
 export interface ICodeResult {
   co2equiv: number;
@@ -5,11 +7,10 @@ export interface ICodeResult {
   badness?: number;
 }
 
-const codeUrl = "http://192.168.10.65:5000/v1/product/{code}";
+const codeUrl = `${baseUrl}v1/product/{code}`;
 
 export async function checkCode(code: string): Promise<ICodeResult | null> {
   try {
-    console.log({ code });
     const result = await fetch(codeUrl.replace("{code}", "0" + code));
     if (result.ok) {
       const rawData = await result.text();
@@ -22,3 +23,7 @@ export async function checkCode(code: string): Promise<ICodeResult | null> {
     return null;
   }
 }
+
+// Recycling Categories
+
+// Voting

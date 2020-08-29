@@ -15,6 +15,9 @@ export function ResultView(props: IResultViewProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.co2Label}>CO2 Eq: {props.result.co2equiv}</Text>
+      <TouchableOpacity style={styles.indicator}>
+        <Text style={styles.indicatorText}>Good</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={scanAnotherCode}>
         <Text style={styles.buttonText}>Scan another code</Text>
       </TouchableOpacity>
@@ -23,6 +26,18 @@ export function ResultView(props: IResultViewProps) {
 }
 
 const styles = StyleSheet.create({
+  indicator: {
+    height: 40,
+    width: "80%",
+    backgroundColor: "#3d801f",
+    marginBottom: 24,
+    borderRadius: 2,
+  },
+  indicatorText: {
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+
   button: { backgroundColor: "#3d801f", padding: 8, borderRadius: 2 },
   buttonText: { color: "#FFFFFF" },
 

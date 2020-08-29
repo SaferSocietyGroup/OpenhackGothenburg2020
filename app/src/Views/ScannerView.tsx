@@ -10,8 +10,6 @@ interface IScannerViewProps {
 export function ScannerView(props: IScannerViewProps) {
   const [hasPermission, setHasPermission] = React.useState<boolean | null>(null);
   const [scanned, setScanned] = React.useState(false);
-  const [code, setCode] = React.useState<string>();
-  const [result, setResult] = React.useState<any>();
 
   React.useEffect(() => {
     (async () => {
@@ -22,7 +20,7 @@ export function ScannerView(props: IScannerViewProps) {
 
   const handleBarCodeScanned = ({ type, data }: any) => {
     setScanned(true);
-    setCode(data);
+    console.log({ type });
     checkCode(data).then((result) => {
       props.resultCallBack(result);
     });

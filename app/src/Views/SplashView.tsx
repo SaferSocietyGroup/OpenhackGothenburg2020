@@ -11,7 +11,6 @@ export function SplashView() {
 
 const styles = StyleSheet.create({
   label: { fontSize: 24 },
-
   container: {
     flex: 1,
     backgroundColor: "#fff",

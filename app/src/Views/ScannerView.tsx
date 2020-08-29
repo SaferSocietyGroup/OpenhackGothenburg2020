@@ -4,7 +4,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { checkCode, ICodeResult } from "../Functions/Api";
 
 interface IScannerViewProps {
-  resultCallBack: (result: ICodeResult | null) => void;
+  resultCallBack: (result: ICodeResult | null, barcode: string) => void;
 }
 
 export function ScannerView(props: IScannerViewProps) {
@@ -20,9 +20,8 @@ export function ScannerView(props: IScannerViewProps) {
 
   const handleBarCodeScanned = ({ type, data }: any) => {
     setScanned(true);
-    console.log({ type });
     checkCode(data).then((result) => {
-      props.resultCallBack(result);
+      props.resultCallBack(result, "0" + data);
     });
   };
 
@@ -41,9 +40,9 @@ export function ScannerView(props: IScannerViewProps) {
         justifyContent: "flex-end",
       }}
     >
-      <BarCodeScanner onBarCodeScanned={(scanned ? undefined : handleBarCodeScanned) as any} style={StyleSheet.absoluteFillObject} >
+      <BarCodeScanner onBarCodeScanned={(scanned ? undefined : handleBarCodeScanned) as any} style={StyleSheet.absoluteFillObject}>
         <View style={styles.layerTop} />
-        <View style={styles.layerCenter} >
+        <View style={styles.layerCenter}>
           <View style={styles.layerLeft} />
           <View style={styles.layerFocused} />
           <View style={styles.layerRight} />
@@ -55,40 +54,40 @@ export function ScannerView(props: IScannerViewProps) {
     </View>
   );
 }
-const opacity = 'rgba(0,0,0,.6)';
+const opacity = "rgba(0,0,0,.6)";
 
 const styles = StyleSheet.create({
-  label: { textAlign: "center", marginBottom: 12, color:'#f3f1f0' },
+  label: { textAlign: "center", marginBottom: 12, color: "#f3f1f0" },
   image: {},
   container: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "column"
+    flexDirection: "column",
   },
-  layerTop:{
+  layerTop: {
     flex: 0.6,
-    backgroundColor: opacity
+    backgroundColor: opacity,
   },
-  layerCenter:{
-    flex:1,
-    flexDirection: 'row',
-    maxHeight:240
+  layerCenter: {
+    flex: 1,
+    flexDirection: "row",
+    maxHeight: 240,
   },
-  layerLeft:{
+  layerLeft: {
     flex: 0.3,
-    backgroundColor: opacity
+    backgroundColor: opacity,
   },
-  layerFocused:{
+  layerFocused: {
     flex: 1,
   },
-  layerRight:{
+  layerRight: {
     flex: 0.3,
-    backgroundColor: opacity
+    backgroundColor: opacity,
   },
-  layerBottom:{
+  layerBottom: {
     flex: 1,
-    backgroundColor: opacity
+    backgroundColor: opacity,
   },
 });

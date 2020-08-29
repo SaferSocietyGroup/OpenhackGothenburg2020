@@ -3,7 +3,7 @@ const baseUrl = "https://atervinn.azurewebsites.net/";
 // Check bar code
 export interface ICodeResult {
   co2equiv: number;
-  sortAs?: string;
+  category?: string;
   badness?: number;
 }
 
@@ -51,27 +51,24 @@ const voteUrl = `${baseUrl}v1/recycling/vote`;
 
 export async function postVote(castItemId: string, categoryId: string) {
   try {
-    const body = JSON.stringify(
-      {
-        userIdentifer: "test",
-        categoryName: categoryId,
-        barcode: castItemId
-      });
-
-      console.log({body});
+    const body = JSON.stringify({
+      userIdentifier: "test",
+      categoryName: categoryId,
+      barcode: castItemId,
+    });
 
     const result = await fetch(voteUrl, {
-      method: "post", body: body
-    }
-    );
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    });
     if (!result.ok) {
-      // console.log({result});
     }
     return;
-  }
-  catch (error) {
+  } catch (error) {
     console.log({ error });
     return;
   }
 }
-

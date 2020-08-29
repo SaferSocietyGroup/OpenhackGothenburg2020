@@ -4,9 +4,9 @@ import { ICodeResult } from "../Functions/Api";
 import { VoteView } from "./VoteView";
 
 interface IResultViewProps {
-  barcode:string;
-  result: ICodeResult;
-  resultCallBack: (result: ICodeResult | null) => void;
+  result: ICodeResult | null;
+  barcode: string | null;
+  resultCallBack: (result: ICodeResult | null, barcode: any) => void;
 }
 
 export function ResultView(props: IResultViewProps) {
@@ -14,24 +14,32 @@ export function ResultView(props: IResultViewProps) {
   const [hasVoted, setHasVoted] = React.useState(false);
 
   const scanAnotherCode = () => {
-    props.resultCallBack(null);
+    props.resultCallBack(null, null);
   };
-  if (showVoteView){
-    return <VoteView barcode={props.barcode} votedCallback={() => {
-      setShowVoteView(false);
-      setHasVoted(true);
-    }} />
+  if (showVoteView) {
+    console.log({ derp: props.barcode });
+    return (
+      <VoteView
+        barcode={props.barcode ? props.barcode : ""}
+        votedCallback={() => {
+          setShowVoteView(false);
+          setHasVoted(true);
+        }}
+      />
+    );
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.sortAsLabel}>Recycle as: {props.result.sortAs}</Text>
-      <Text style={styles.co2Label}>CO2 Eq: {props.result.co2equiv}</Text>
+      <Text style={styles.sortAsLabel}>Recycle as: {props.result?.category}</Text>
+      <Text style={styles.co2Label}>CO2 Eq: {props.result?.co2equiv}</Text>
       <TouchableOpacity style={styles.indicator}>
         <Text style={styles.indicatorText}>Good</Text>
       </TouchableOpacity>
-    {!hasVoted && (<TouchableOpacity style={styles.button} onPress={() => setShowVoteView(true)}>
-        <Text style={styles.buttonText}>Vote</Text>
-      </TouchableOpacity>)}
+      {!hasVoted && (
+        <TouchableOpacity style={styles.button} onPress={() => setShowVoteView(true)}>
+          <Text style={styles.buttonText}>Vote</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.button} onPress={scanAnotherCode}>
         <Text style={styles.buttonText}>Scan another code</Text>
       </TouchableOpacity>

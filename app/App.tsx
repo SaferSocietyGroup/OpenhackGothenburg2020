@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ShadowPropTypesIOS } from "react-native";
 import { ScannerView } from "./src/Views/ScannerView";
 import { ResultView } from "./src/Views/ResultView";
 import { ICodeResult } from "./src/Functions/Api";
@@ -16,6 +16,7 @@ export default function App() {
   const [permission, setPermission] = React.useState(false);
   const [result, setResult] = React.useState<ICodeResult | null>(null);
   const [splashDone, setSplashDone] = React.useState(false);
+  const [barcode, setBarcode] = React.useState<any>(null);
 
   let timer1 = setTimeout(() => setSplashDone(true), 3000);
   React.useEffect(() => {
@@ -24,7 +25,8 @@ export default function App() {
     };
   }, [splashDone]);
 
-  const resultCallback = (result: any) => {
+  const resultCallback = (result: any, barcode: string) => {
+    setBarcode(barcode);
     setResult(result);
   };
 
@@ -45,7 +47,7 @@ export default function App() {
   }
 
   if (showResult) {
-    return <ResultView resultCallBack={resultCallback} barcode result={result}></ResultView>;
+    return <ResultView resultCallBack={resultCallback} barcode={barcode} result={result}></ResultView>;
   }
   return <ScannerView resultCallBack={resultCallback}></ScannerView>;
 }

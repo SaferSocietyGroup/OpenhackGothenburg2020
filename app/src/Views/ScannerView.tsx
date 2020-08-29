@@ -44,12 +44,23 @@ export function ScannerView(props: IScannerViewProps) {
       }}
     >
       <Text style={styles.label}>Place barcode inside the square to scan</Text>
-      <BarCodeScanner onBarCodeScanned={(scanned ? undefined : handleBarCodeScanned) as any} style={StyleSheet.absoluteFillObject} />
 
+      {scanned && <Button color="#3d801f" title={"Scan Again"} onPress={() => setScanned(false)} />}
+
+
+      <BarCodeScanner onBarCodeScanned={(scanned ? undefined : handleBarCodeScanned) as any} style={StyleSheet.absoluteFillObject} >
+        <View style={styles.layerTop} />
+        <View style={styles.layerCenter} >
+          <View style={styles.layerLeft} />
+          <View style={styles.layerFocused} />
+          <View style={styles.layerRight} />
+        </View>
+      </BarCodeScanner>
       {scanned && <Button color="#3d801f" title={"Scan Again"} onPress={() => setScanned(false)} />}
     </View>
   );
 }
+const opacity = 'rgba(0,0,0,.6)';
 
 const styles = StyleSheet.create({
   label: { textAlign: "center", marginBottom: 12 },
@@ -59,5 +70,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "column"
+  },
+  layerTop:{
+    flex: 2,
+    backgroundColor: opacity
+  },
+  layerCenter:{
+    flex:1,
+    flexDirection: 'row'
+  },
+  layerLeft:{
+    flex: 1,
+    backgroundColor: opacity
+  },
+  layerFocused:{
+    flex: 10
+  },
+  layerRight:{
+    flex: 1,
+    backgroundColor: opacity
+  },
+  layerBottom:{
+    flex: 2,
+    backgroundColor: opacity
   },
 });

@@ -4,11 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
+pytest = "*"
 
 [packages]
 flask = "*"
 simplejson = "*"
 sqlalchemy = "*"
+Flask-SQLAlchemy = "*"
 
 [requires]
 python_version = "3"

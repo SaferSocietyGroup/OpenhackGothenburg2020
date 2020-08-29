@@ -1,14 +1,20 @@
-from flask import Flask, abort
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Product, DATABASE_NAME
+from flask import Flask
+from database_setup import DATABASE_NAME
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-engine = create_engine(DATABASE_NAME)
-Base.metadata.bind = engine
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_NAME
+db = SQLAlchemy(app)
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+
+class Product(db.Model):
+    __tablename__ = 'product'
+
+    id = db.Column(db.Integer, primary_key=True)
+    barcode = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    co2equiv = db.Column(db.Float)
+
 
 @app.route('/v1/ping')
 def ping():
@@ -16,10 +22,8 @@ def ping():
 
 
 @app.route('/v1/product/<barcode>')
-def product(barcode: str):
-    rows = session.query(Product).all()
-    match = [row for row in rows if row.barcode == barcode]
-    if match:
-        return str(match[0].co2equiv)
-    else:
-        abort(404)
+def get_product(barcode: str):
+    product = Product.query.filter_by(barcode=barcode).first_or_404()
+    return {
+        'co2equiv': product.co2equiv,
+    }

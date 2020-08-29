@@ -53,14 +53,14 @@ export function ScannerView(props: IScannerViewProps) {
         <View style={styles.layerBottom} />
       </BarCodeScanner>
       <Text style={styles.label}>Place barcode inside the square to scan</Text>
-      {scanned && <Button color="#3d801f" title={"Scan Again"} onPress={() => setScanned(false)} />}
+      {scanned && <Button color="#f3f1f0" title={"Scan Again"} onPress={() => setScanned(false)} />}
     </View>
   );
 }
 const opacity = 'rgba(0,0,0,.6)';
 
 const styles = StyleSheet.create({
-  label: { textAlign: "center", marginBottom: 12 },
+  label: { textAlign: "center", marginBottom: 12, color:'#f3f1f0' },
   image: {},
   container: {
     flex: 1,

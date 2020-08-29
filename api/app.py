@@ -1,6 +1,7 @@
 from flask import Flask, request
 from .database_setup import DATABASE_NAME
 from flask_sqlalchemy import SQLAlchemy
+from itertools import groupby
 
 
 app = Flask(__name__)
@@ -61,8 +62,20 @@ def ping():
 @app.route('/v1/product/<barcode>')
 def get_product(barcode: str):
     product = Product.query.filter_by(barcode=barcode).first_or_404()
+    # print(product.votes)
+    votes = list(map(list, groupby(product.votes, lambda vote: vote.category_id)))
+    votes.sort(key=lambda group: len(group))
+    print(votes)
+    if votes:
+        category_id = votes[0][0]
+        category = Category.query.filter_by(id=category_id).first().name
+    else:
+        category = 'Unknown'
+    # confidence =
+
     return {
         'co2equiv': product.co2equiv,
+        'category': category
     }
 
 

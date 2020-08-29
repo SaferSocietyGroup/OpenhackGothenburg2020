@@ -1,9 +1,9 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ScannerView } from "./Views/ScannerView";
 import { ResultView } from "./Views/ResultView";
 import { Camera } from "expo-camera";
+import { ICodeResult } from "./Functions/Api";
 
 function checkPermission(setPermission: any) {
   Camera.requestPermissionsAsync().then((status) => {
@@ -13,13 +13,17 @@ function checkPermission(setPermission: any) {
 
 export default function App() {
   const [permission, setPermission] = React.useState(false);
+  const [result, setResult] = React.useState<ICodeResult | null>(null);
 
-  React.useEffect(() => checkPermission(setPermission));
+  const setResultCallback = (result: any) => {
+    setResult(result);
+  };
 
-  const showResult = false;
-  console.log(permission);
+  React.useEffect(() => checkPermission(setPermission), []);
 
-  if (!permission) {
+  const showResult = !!result;
+
+  if (!true) {
     return (
       <View style={styles.container}>
         <Text>Must give permission :(</Text>
@@ -28,9 +32,9 @@ export default function App() {
   }
 
   if (showResult) {
-    return <ResultView></ResultView>;
+    return <ResultView resultCallBack={setResultCallback} result={result}></ResultView>;
   }
-  return <ScannerView></ScannerView>;
+  return <ScannerView resultCallBack={setResultCallback}></ScannerView>;
 }
 
 const styles = StyleSheet.create({

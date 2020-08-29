@@ -1,47 +1,51 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, Image } from "react-native";
-import { Camera } from "expo-camera";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { checkCode, ICodeResult } from "../Functions/Api";
 
-const showResult = false;
+interface IScannerViewProps {
+  resultCallBack: (result: ICodeResult | null) => void;
+}
 
-export function ScannerView() {
-  const [cameraRef, setCameraRef] = React.useState<any>(undefined);
-  const [image, setImage] = React.useState<any>(undefined);
+export function ScannerView(props: IScannerViewProps) {
+  const [hasPermission, setHasPermission] = React.useState<boolean | null>(null);
+  const [scanned, setScanned] = React.useState(false);
+  const [code, setCode] = React.useState<string>();
+  const [result, setResult] = React.useState<any>();
 
-  const imageExists = !!image;
+  React.useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
-  console.log({ image });
+  const handleBarCodeScanned = ({ type, data }: any) => {
+    setScanned(true);
+    setCode(data);
+    checkCode(data).then((result) => {
+      props.resultCallBack(result);
+    });
+  };
+
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
   return (
-    <View style={styles.container}>
-      <Camera
-        style={{ flex: 1 }}
-        autoFocus={false}
-        type={Camera.Constants.Type.Back}
-        ref={(ref) => {
-          setCameraRef(ref);
-        }}
-      ></Camera>
-      {imageExists ? (
-        <Image
-          style={styles.image}
-          source={{
-            uri: image.uri,
-          }}
-        />
-      ) : undefined}
-      <Text>Scanner</Text>
-      <Button
-        color="#000000"
-        title="Scan"
-        onPress={() => {
-          if (cameraRef) {
-            cameraRef
-              .takePictureAsync()
-              .then((image: any) => setImage(image))
-              .catch((error: any) => console.log({ error }));
-          }
-        }}
-      ></Button>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "flex-end",
+      }}
+    >
+      <BarCodeScanner onBarCodeScanned={(scanned ? undefined : handleBarCodeScanned) as any} style={StyleSheet.absoluteFillObject} />
+
+      {scanned && <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />}
     </View>
   );
 }

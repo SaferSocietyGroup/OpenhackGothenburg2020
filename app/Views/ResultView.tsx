@@ -1,10 +1,21 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { ICodeResult } from "../Functions/Api";
 
-export function ResultView() {
+interface IResultViewProps {
+  result: any;
+  resultCallBack: (result: ICodeResult | null) => void;
+}
+
+export function ResultView(props: IResultViewProps) {
+  const scanAnotherCode = () => {
+    props.resultCallBack(null);
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Result</Text>
+      <Text>CO2 Eq: {props.result.co2equiv}</Text>
+      <Button title="Scan another code" onPress={scanAnotherCode} color="#3d801f"></Button>
     </View>
   );
 }

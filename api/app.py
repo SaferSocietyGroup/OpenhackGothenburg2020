@@ -1,5 +1,5 @@
 from flask import Flask
-from database_setup import DATABASE_NAME
+from .database_setup import DATABASE_NAME
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)

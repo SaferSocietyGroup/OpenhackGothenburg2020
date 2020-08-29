@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from .database_setup import DATABASE_NAME
 from flask_sqlalchemy import SQLAlchemy
 
@@ -35,6 +35,8 @@ class Vote(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     product = db.relationship('Product', backref=db.backref('votes', lazy=True))
 
+    user_identifier = db.Column(db.String(50), nullable=False, index=True)
+
 
 def init_db():
     db.create_all()
@@ -64,9 +66,35 @@ def get_product(barcode: str):
     }
 
 
-@app.route('/v1/category')
+@app.route('/v1/recycling/category')
 def get_categories():
     categories = Category.query.all()
 
-    return {'categories':
-        [category.name for category in categories]}
+    return {'categories': [category.name for category in categories]}
+
+
+@app.route('/v1/recycling/vote', methods=['GET'])
+def get_votes():
+    votes = Vote.query.all()
+
+    return {'votes': [
+        {'product': vote.product.barcode, 'category': vote.category.name} for vote in votes
+    ]}
+
+
+@app.route('/v1/recycling/vote', methods=['POST'])
+def place_vote():
+    content = request.json
+    user_identifier = content['userIdentifier']
+    category = Category.query.filter_by(name=content['categoryName']).first()
+    product = Product.query.filter_by(barcode=content['barcode']).first()
+    vote = (Vote.query.filter_by(user_identifier=user_identifier)
+            .filter_by(product_id=product.id)
+            .first())
+
+    if not vote:
+        new_vote = Vote(category=category, product=product, user_identifier=user_identifier)
+        db.session.add(new_vote)
+        db.session.commit()
+
+    return ''

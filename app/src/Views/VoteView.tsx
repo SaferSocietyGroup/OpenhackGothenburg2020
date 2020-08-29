@@ -1,29 +1,53 @@
 import React from "react";
 import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
+import { getCategories, postVote } from "../Functions/Api";
 
 interface IVoteViewProps {
-    categories:string[],
-    votedCallback:()=>void
+    votedCallback:()=>void,
+    barcode: string;
 }
 
 function mapCategoriesToButtons(categories:string[], votedCallback:()=>void){
     return (
         categories.map((c, index) =>
-        <TouchableOpacity key={index} style={styles.appButtonContainer} onPress={()=>castVote(votedCallback)}>
+        <TouchableOpacity key={index} style={styles.appButtonContainer} 
+            onPress={()=>castVote(c,c,votedCallback)}>
+            
             <Text style={styles.appButtonText}>{c}</Text>
         </TouchableOpacity>)
         );
 }
 
-function castVote(votedCallback:()=>void){
+function castVote(castItemId:string,categoryId:string, votedCallback:()=>void){
+    postVote("",categoryId);
+
     votedCallback();
 }
 
 export function VoteView(props: IVoteViewProps){
+const [categories, setCategories] = React.useState<string[] | null | undefined>(null);
+
+React.useEffect(()=>{
+    getCategories().then((data) => {
+        console.log({data});
+        setCategories(data?.categories);
+    });
+}, []);
+
+
+if(!categories){
+    return (
+        <View style={styles.container}>
+         <Text>Loading...</Text>
+        </View>
+        );
+}
+
+
     return (
         <View style={styles.container}>
             <Text style={styles.appItemText}>Where should we put this?</Text>
-              {mapCategoriesToButtons(props.categories, props.votedCallback)}
+              {mapCategoriesToButtons(categories, props.votedCallback)}
         </View>
     );
 }

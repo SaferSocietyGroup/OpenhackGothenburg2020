@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.10.65:5000/";
+const baseUrl = "https://atervinn.azurewebsites.net/";
 
 // Check bar code
 export interface ICodeResult {
@@ -20,7 +20,7 @@ export async function checkCode(code: string): Promise<ICodeResult | null> {
     return null;
   } catch (error) {
     console.log(error);
-    return { co2equiv: 2, sortAs: "Plastic" };
+    return null;
   }
 }
 
@@ -29,7 +29,7 @@ export interface ICategoriesResult {
   categories: string[];
 }
 
-const categoriesUrl = `${baseUrl}v1/categories`;
+const categoriesUrl = `${baseUrl}v1/recycling/category`;
 
 export async function getCategories(): Promise<ICategoriesResult | null> {
   try {
@@ -47,3 +47,31 @@ export async function getCategories(): Promise<ICategoriesResult | null> {
 }
 
 // Voting
+const voteUrl = `${baseUrl}v1/recycling/vote`;
+
+export async function postVote(castItemId: string, categoryId: string) {
+  try {
+    const body = JSON.stringify(
+      {
+        userIdentifer: "test",
+        categoryName: categoryId,
+        barcode: castItemId
+      });
+
+      console.log({body});
+
+    const result = await fetch(voteUrl, {
+      method: "post", body: body
+    }
+    );
+    if (!result.ok) {
+      // console.log({result});
+    }
+    return;
+  }
+  catch (error) {
+    console.log({ error });
+    return;
+  }
+}
+

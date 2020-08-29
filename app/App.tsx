@@ -45,7 +45,7 @@ export default function App() {
   }
 
   if (showResult) {
-    return <ResultView resultCallBack={resultCallback} result={result}></ResultView>;
+    return <ResultView resultCallBack={resultCallback} barcode result={result}></ResultView>;
   }
   return <ScannerView resultCallBack={resultCallback}></ScannerView>;
 }

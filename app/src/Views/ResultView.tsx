@@ -1,17 +1,27 @@
 import React from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { ICodeResult } from "../Functions/Api";
+import { VoteView } from "./VoteView";
 
 interface IResultViewProps {
+  barcode:string;
   result: ICodeResult;
   resultCallBack: (result: ICodeResult | null) => void;
 }
 
 export function ResultView(props: IResultViewProps) {
+  const [showVoteView, setShowVoteView] = React.useState(false);
+  const [hasVoted, setHasVoted] = React.useState(false);
+
   const scanAnotherCode = () => {
     props.resultCallBack(null);
   };
-
+  if (showVoteView){
+    return <VoteView barcode={props.barcode} votedCallback={() => {
+      setShowVoteView(false);
+      setHasVoted(true);
+    }} />
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.sortAsLabel}>Recycle as: {props.result.sortAs}</Text>
@@ -19,9 +29,9 @@ export function ResultView(props: IResultViewProps) {
       <TouchableOpacity style={styles.indicator}>
         <Text style={styles.indicatorText}>Good</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={scanAnotherCode}>
+    {!hasVoted && (<TouchableOpacity style={styles.button} onPress={() => setShowVoteView(true)}>
         <Text style={styles.buttonText}>Vote</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>)}
       <TouchableOpacity style={styles.button} onPress={scanAnotherCode}>
         <Text style={styles.buttonText}>Scan another code</Text>
       </TouchableOpacity>
